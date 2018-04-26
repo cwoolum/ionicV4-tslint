@@ -1,0 +1,26 @@
+{
+  "name": "ionicv4-tslint",
+  "version": "1.0.0",
+  "description": "Linting Rules for Ionic V4",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cwoolum/ionicV4-tslint.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cwoolum/ionicV4-tslint/issues"
+  },
+  "homepage": "https://github.com/cwoolum/ionicV4-tslint#readme",
+  "devDependencies": {
+    "codelyzer": "^4.3.0",
+    "typescript": "^2.8.3"
+  },
+  "peerDependencies": {
+    "tslint": "^5.9.1"
+  }
+}
