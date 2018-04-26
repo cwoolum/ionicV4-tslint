@@ -1,14 +1,10 @@
 {
-    "compilerOptions": {
-        "lib": [
-            "dom",
-            "es2015",
-            "es6"
-        ],
-        "module": "commonjs",
-        "noLib": false,
-        "outDir": "./dist",
-        "target": "es5",
-        "inlineSourceMap": true
-    }
+  "compilerOptions": {
+    "lib": ["dom", "es2015", "es6"],
+    "module": "commonjs",
+    "noLib": false,
+    "outDir": "./dist",
+    "target": "es5",
+    "inlineSourceMap": true
+  }
 }
