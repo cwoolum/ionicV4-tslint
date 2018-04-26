@@ -4,7 +4,6 @@ node_js:
   - '8.11.1'
   - stable
 os:
-  - linux
   - osx
 
 branches:
