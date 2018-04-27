@@ -25,7 +25,7 @@ const getReplacements = (text: ast.ElementAst, absolutePosition: number) => {
   const endNodeBeginIndex: number = text.endSourceSpan.start.col;
   const endNodeEndIndex: number = text.endSourceSpan.end.col;
 
-  const len = startNodeEndIndex - endNodeBeginIndex;
+  const len = endNodeBeginIndex - startNodeEndIndex;
   const trimmed = content.substr(startNodeEndIndex, len).trim();
 
   return [new Lint.Replacement(absolutePosition, endNodeEndIndex - startNodeBeginIndex, `${ValidSyntaxOpen}${trimmed}${ValidSyntaxClose}`)];
@@ -35,6 +35,7 @@ class IonNavbarIsNowIonToolbarTemplateVisitor extends BasicTemplateAstVisitor {
   visitElement(element: ast.ElementAst, context: any): any {
     if (element.name) {
       let error = null;
+      console.log('element.name');
       if (InvalidSyntaxBoxRe.test(element.name)) {
         error = 'Invalid component. Please use ion-toolbar.';
       }

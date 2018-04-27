@@ -108,5 +108,43 @@ describe(ruleName, () => {
             class Bar {}
           `);
     });
+
+    it('should fail when navbar is passed in', () => {
+      let source = `
+            @Component({
+              template: \` <ion-navbar><label>Hello</label></ion-navbar>
+              \`
+            })
+            class Bar {}
+          `;
+
+      const fail = {
+        message: 'Invalid component. Please use ion-toolbar.',
+        startPosition: {
+          line: 2,
+          character: 27
+        },
+        endPosition: {
+          line: 2,
+          character: 39
+        }
+      };
+
+      const failures: RuleFailure[] = assertFailure(ruleName, source, fail);
+
+      const fixes: Replacement[] = failures[0].getFix() as any;
+
+      const res = Replacement.applyAll(source, fixes);
+      expect(res).to.eq(`
+            @Component({
+              template: \` <ion-toolbar>
+                            <ion-buttons slot="start">
+                                <ion-back-button></ion-back-button>
+                            </ion-buttons><label>Hello</label></ion-toolbar>
+              \`
+            })
+            class Bar {}
+          `);
+    });
   });
 });
