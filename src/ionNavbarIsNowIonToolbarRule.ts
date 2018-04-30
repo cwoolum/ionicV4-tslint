@@ -35,9 +35,9 @@ class IonNavbarIsNowIonToolbarTemplateVisitor extends BasicTemplateAstVisitor {
   visitElement(element: ast.ElementAst, context: any): any {
     if (element.name) {
       let error = null;
-      console.log('element.name');
+     
       if (InvalidSyntaxBoxRe.test(element.name)) {
-        error = 'Invalid component. Please use ion-toolbar.';
+        error = 'ion-navbar is no longer used. Please use ion-toolbar.';
       }
 
       if (error) {
@@ -49,6 +49,8 @@ class IonNavbarIsNowIonToolbarTemplateVisitor extends BasicTemplateAstVisitor {
         this.addFailure(this.createFailure(start, expr.trim().length, error, getReplacements(element, absolutePosition)));
       }
     }
+
+    super.visitElement(element, context);
   }
 }
 
@@ -59,7 +61,7 @@ export class Rule extends Lint.Rules.AbstractRule {
     description: 'Ion Navbar has been removed and Ion Toolbar is now the recommended component.',
     options: null,
     optionsDescription: 'Not configurable.',
-    typescriptOnly: true,
+    typescriptOnly: false,
     hasFix: true,
   };
 
