@@ -9,7 +9,7 @@ import { start } from 'repl';
 export const ruleName = 'ion-navbar-is-now-ion-toolbar';
 const InvalidSyntaxBoxOpen = '<ion-navbar>';
 const InvalidSyntaxBoxClose = '</ion-navbar>';
-const InvalidSyntaxBoxRe = new RegExp('<ion-navbar[^>]*>((.|\n)*?)<\/ion-navbar>', 's');
+const InvalidSyntaxBoxRe = new RegExp('<ion-navbar[^>]*>((.|\n)*?)</ion-navbar>', 's');
 const ValidSyntaxOpen = `<ion-toolbar>
   <ion-buttons slot="start">
     <ion-back-button></ion-back-button>
@@ -33,8 +33,7 @@ const getReplacements = (text: ast.ElementAst, absolutePosition: number) => {
     if (match) {
       newlineLocations.push(match.index);
     }
-  }
-  while (match);
+  } while (match);
 
   let startingLine = text.sourceSpan.start.line;
   let endingLine = text.endSourceSpan.end.line;
@@ -48,7 +47,7 @@ const getReplacements = (text: ast.ElementAst, absolutePosition: number) => {
       if (i === startingLine) {
         length += newlineLocations[i] - text.sourceSpan.start.col;
       } else if (i - 1 === endingLine) {
-        length += (text.endSourceSpan.end.col - 1);
+        length += text.endSourceSpan.end.col - 1;
       } else {
         length += getLineLength(newlineLocations, i);
       }
@@ -56,8 +55,6 @@ const getReplacements = (text: ast.ElementAst, absolutePosition: number) => {
   } else {
     length = text.endSourceSpan.end.col - text.sourceSpan.start.col;
   }
-
-
 
   return [new Lint.Replacement(absolutePosition, length, `${ValidSyntaxOpen}${results[1].trim()}${ValidSyntaxClose}`)];
 };
@@ -93,12 +90,12 @@ export class Rule extends Lint.Rules.AbstractRule {
     options: null,
     optionsDescription: 'Not configurable.',
     typescriptOnly: false,
-    hasFix: true,
+    hasFix: true
   };
 
   getOptions() {
     let options = super.getOptions();
-    options.ruleSeverity = "error";
+    options.ruleSeverity = 'error';
 
     return options;
   }
@@ -118,4 +115,3 @@ function getLineLength(newlineLocations: any[], i: number) {
 
   return newlineLocations[i];
 }
-
