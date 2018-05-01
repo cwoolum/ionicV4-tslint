@@ -8,35 +8,65 @@ import { Replacement } from 'tslint';
 export const ruleName = 'ion-navbar-is-now-ion-toolbar';
 const InvalidSyntaxBoxOpen = '<ion-navbar>';
 const InvalidSyntaxBoxClose = '</ion-navbar>';
-const InvalidSyntaxBoxRe = new RegExp('ion-navbar');
+const InvalidSyntaxBoxRe = new RegExp('<ion-navbar[^>]*>((.|\n)*?)<\/ion-navbar>');
 const ValidSyntaxOpen = `<ion-toolbar>
-                            <ion-buttons slot="start">
-                                <ion-back-button></ion-back-button>
-                            </ion-buttons>`;
+  <ion-buttons slot="start">
+    <ion-back-button></ion-back-button>
+  </ion-buttons>`;
 
-const ValidSyntaxClose = `</ion-toolbar>`;
+const ValidSyntaxClose = `\n</ion-toolbar>`;
 
 const getReplacements = (text: ast.ElementAst, absolutePosition: number) => {
   const content: string = text.sourceSpan.start.file.content;
 
-  const startNodeBeginIndex: number = text.sourceSpan.start.col;
-  const startNodeEndIndex: number = text.sourceSpan.end.col;
+  const results = InvalidSyntaxBoxRe.exec(content);
 
-  const endNodeBeginIndex: number = text.endSourceSpan.start.col;
-  const endNodeEndIndex: number = text.endSourceSpan.end.col;
+  let m = undefined;
+  const newLineRegex = new RegExp(/\n/g, 'g');
 
-  const len = endNodeBeginIndex - startNodeEndIndex;
-  const trimmed = content.substr(startNodeEndIndex, len).trim();
+  const newlineLocations = [];
 
-  return [new Lint.Replacement(absolutePosition, endNodeEndIndex - startNodeBeginIndex, `${ValidSyntaxOpen}${trimmed}${ValidSyntaxClose}`)];
+  do {
+    m = newLineRegex.exec(content);
+
+    if (m) {
+      newlineLocations.push(m.index);
+    }
+  }
+  while (m);
+
+  let startingLine = text.sourceSpan.start.line;
+  let endingLine = text.endSourceSpan.end.line;
+
+  let endingCol = text.endSourceSpan.end.col;
+
+  let length = 0;
+
+  if (endingLine > startingLine) {
+    for (let i = 0; i <= endingLine; i++) {
+      if (i === startingLine) {
+        length += newlineLocations[i] - text.sourceSpan.start.col;
+      } else if (i - 1 === endingLine) {
+        length += (text.endSourceSpan.end.col - 1);
+      } else {
+        length += getLineLength(newlineLocations, i);
+      }
+    }
+  } else {
+    length = text.endSourceSpan.end.col - text.sourceSpan.start.col;
+  }
+
+
+
+  return [new Lint.Replacement(absolutePosition, length, `${ValidSyntaxOpen}${results[1].trim()}${ValidSyntaxClose}`)];
 };
 
 class IonNavbarIsNowIonToolbarTemplateVisitor extends BasicTemplateAstVisitor {
   visitElement(element: ast.ElementAst, context: any): any {
     if (element.name) {
       let error = null;
-     
-      if (InvalidSyntaxBoxRe.test(element.name)) {
+
+      if (element.name === 'ion-navbar') {
         error = 'ion-navbar is no longer used. Please use ion-toolbar.';
       }
 
@@ -80,3 +110,11 @@ export class Rule extends Lint.Rules.AbstractRule {
     );
   }
 }
+function getLineLength(newlineLocations: any[], i: number) {
+  if (i > 0) {
+    return newlineLocations[i] - newlineLocations[i - 1];
+  }
+
+  return newlineLocations[i];
+}
+

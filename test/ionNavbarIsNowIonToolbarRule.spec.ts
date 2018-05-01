@@ -28,7 +28,7 @@ describe(ruleName, () => {
           `;
 
       const fail = {
-        message: 'Invalid component. Please use ion-toolbar.',
+        message: 'ion-navbar is no longer used. Please use ion-toolbar.',
         startPosition: {
           line: 2,
           character: 27
@@ -55,7 +55,7 @@ describe(ruleName, () => {
           `;
 
       const fail = {
-        message: 'Invalid component. Please use ion-toolbar.',
+        message: 'ion-navbar is no longer used. Please use ion-toolbar.',
         startPosition: {
           line: 3,
           character: 15
@@ -81,7 +81,7 @@ describe(ruleName, () => {
           `;
 
       const fail = {
-        message: 'Invalid component. Please use ion-toolbar.',
+        message: 'ion-navbar is no longer used. Please use ion-toolbar.',
         startPosition: {
           line: 2,
           character: 27
@@ -100,9 +100,10 @@ describe(ruleName, () => {
       expect(res).to.eq(`
             @Component({
               template: \` <ion-toolbar>
-                            <ion-buttons slot="start">
-                                <ion-back-button></ion-back-button>
-                            </ion-buttons></ion-toolbar>
+  <ion-buttons slot="start">
+    <ion-back-button></ion-back-button>
+  </ion-buttons>
+</ion-toolbar>
               \`
             })
             class Bar {}
@@ -119,7 +120,7 @@ describe(ruleName, () => {
           `;
 
       const fail = {
-        message: 'Invalid component. Please use ion-toolbar.',
+        message: 'ion-navbar is no longer used. Please use ion-toolbar.',
         startPosition: {
           line: 2,
           character: 27
@@ -138,9 +139,95 @@ describe(ruleName, () => {
       expect(res).to.eq(`
             @Component({
               template: \` <ion-toolbar>
-                            <ion-buttons slot="start">
-                                <ion-back-button></ion-back-button>
-                            </ion-buttons><label>Hello</label></ion-toolbar>
+  <ion-buttons slot="start">
+    <ion-back-button></ion-back-button>
+  </ion-buttons><label>Hello</label>
+</ion-toolbar>
+              \`
+            })
+            class Bar {}
+          `);
+    });
+
+    it('should fail when navbar is passed in', () => {
+      let source = `
+            @Component({
+              template: \`
+              <ion-navbar>
+                <ion-title>Edit Group</ion-title>
+              </ion-navbar>
+              \`
+            })
+            class Bar {}
+          `;
+
+      const fail = {
+        message: 'ion-navbar is no longer used. Please use ion-toolbar.',
+        startPosition: {
+          line: 3,
+          character: 15
+        },
+        endPosition: {
+          line: 4,
+          character: 0
+        }
+      };
+
+      const failures: RuleFailure[] = assertFailure(ruleName, source, fail);
+
+      const fixes: Replacement[] = failures[0].getFix() as any;
+
+      const res = Replacement.applyAll(source, fixes);
+      expect(res).to.eq(`
+            @Component({
+              template: \`
+              <ion-toolbar>
+  <ion-buttons slot="start">
+    <ion-back-button></ion-back-button>
+  </ion-buttons><ion-title>Edit Group</ion-title>
+</ion-toolbar>              \`
+            })
+            class Bar {}
+          `);
+    });
+
+    it('should fail when navbar is passed in', () => {
+      let source = `
+            @Component({
+              template: \`
+              <ion-navbar attr="something">
+                <ion-title>Edit Group</ion-title>
+              </ion-navbar>
+              \`
+            })
+            class Bar {}
+          `;
+
+      const fail = {
+        message: 'ion-navbar is no longer used. Please use ion-toolbar.',
+        startPosition: {
+          line: 3,
+          character: 14
+        },
+        endPosition: {
+          line: 3,
+          character: 43
+        }
+      };
+
+      const failures: RuleFailure[] = assertFailure(ruleName, source, fail);
+
+      const fixes: Replacement[] = failures[0].getFix() as any;
+
+      const res = Replacement.applyAll(source, fixes);
+      expect(res).to.eq(`
+            @Component({
+              template: \`
+             <ion-toolbar>
+  <ion-buttons slot="start">
+    <ion-back-button></ion-back-button>
+  </ion-buttons><ion-title>Edit Group</ion-title>
+</ion-toolbar>
               \`
             })
             class Bar {}
