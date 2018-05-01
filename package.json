@@ -1,6 +1,6 @@
 {
   "name": "ionicv4-tslint",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "description": "Linting Rules for Ionic V4",
   "main": "index.js",
   "scripts": {
@@ -20,11 +20,13 @@
     "set:vars": "ts-node build/vars.ts --src ./dist",
     "tscv": "tsc --version",
     "tsc": "tsc",
-    "tsc:watch": "tsc --w"
+    "tsc:watch": "tsc --w",
+    "semantic-release": "semantic-release",
+    "travis-deploy-once": "travis-deploy-once"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cwoolum/ionicV4-tslint.git"
+    "url": "https://github.com/cwoolum/ionicV4-tslint.git"
   },
   "author": "",
   "license": "ISC",
@@ -49,7 +51,9 @@
     "rxjs-compat": "^6.0.0",
     "ts-node": "^6.0.1",
     "tslint": "^5.0.0",
-    "typescript": "^2.7.2"
+    "typescript": "^2.7.2",
+    "semantic-release": "^15.1.8",
+    "travis-deploy-once": "^5.0.0"
   },
   "peerDependencies": {
     "tslint": "^5.9.1"
