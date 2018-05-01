@@ -57,5 +57,12 @@
   },
   "peerDependencies": {
     "tslint": "^5.9.1"
+  },
+  "release": {
+    "publish": [{
+      "path": "@semantic-release/npm",
+      "npmPublish": true,
+      "pkgRoot": "dist"
+    }]
   }
 }
