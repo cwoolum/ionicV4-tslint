@@ -4,11 +4,12 @@ import { BasicTemplateAstVisitor } from 'codelyzer/angular/templates/basicTempla
 import * as Lint from 'tslint';
 import * as ts from 'typescript';
 import { Replacement } from 'tslint';
+import { start } from 'repl';
 
 export const ruleName = 'ion-navbar-is-now-ion-toolbar';
 const InvalidSyntaxBoxOpen = '<ion-navbar>';
 const InvalidSyntaxBoxClose = '</ion-navbar>';
-const InvalidSyntaxBoxRe = new RegExp('<ion-navbar[^>]*>((.|\n)*?)<\/ion-navbar>');
+const InvalidSyntaxBoxRe = new RegExp('<ion-navbar[^>]*>((.|\n)*?)<\/ion-navbar>', 's');
 const ValidSyntaxOpen = `<ion-toolbar>
   <ion-buttons slot="start">
     <ion-back-button></ion-back-button>
@@ -21,19 +22,19 @@ const getReplacements = (text: ast.ElementAst, absolutePosition: number) => {
 
   const results = InvalidSyntaxBoxRe.exec(content);
 
-  let m = undefined;
+  let match = undefined;
   const newLineRegex = new RegExp(/\n/g, 'g');
 
   const newlineLocations = [];
 
   do {
-    m = newLineRegex.exec(content);
+    match = newLineRegex.exec(content);
 
-    if (m) {
-      newlineLocations.push(m.index);
+    if (match) {
+      newlineLocations.push(match.index);
     }
   }
-  while (m);
+  while (match);
 
   let startingLine = text.sourceSpan.start.line;
   let endingLine = text.endSourceSpan.end.line;
@@ -43,7 +44,7 @@ const getReplacements = (text: ast.ElementAst, absolutePosition: number) => {
   let length = 0;
 
   if (endingLine > startingLine) {
-    for (let i = 0; i <= endingLine; i++) {
+    for (let i = startingLine; i <= endingLine; i++) {
       if (i === startingLine) {
         length += newlineLocations[i] - text.sourceSpan.start.col;
       } else if (i - 1 === endingLine) {

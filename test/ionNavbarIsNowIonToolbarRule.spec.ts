@@ -233,5 +233,63 @@ describe(ruleName, () => {
             class Bar {}
           `);
     });
+
+    it('should fail when navbar is passed in', () => {
+      let source = `
+            @Component({
+              template: \`
+              <ion-header>
+                <ion-navbar>
+                  <ion-button menuToggle>
+                    <ion-icon name="menu"></ion-icon>
+                  </ion-button>
+                  <ion-title>Profile</ion-title>
+                </ion-navbar>
+              </ion-header>
+              <ion-content>
+                <user-profile></user-profile>
+              </ion-content>
+              \`
+            })
+            class Bar {}
+          `;
+
+      const fail = {
+        message: 'ion-navbar is no longer used. Please use ion-toolbar.',
+        startPosition: {
+          line: 4,
+          character: 17
+        },
+        endPosition: {
+          line: 5,
+          character: 0
+        }
+      };
+
+      const failures: RuleFailure[] = assertFailure(ruleName, source, fail);
+
+      const fixes: Replacement[] = failures[0].getFix() as any;
+
+      const res = Replacement.applyAll(source, fixes);
+      expect(res).to.eq(`
+            @Component({
+              template: \`
+              <ion-header>
+                <ion-toolbar>
+  <ion-buttons slot="start">
+    <ion-back-button></ion-back-button>
+  </ion-buttons><ion-button menuToggle>
+                    <ion-icon name="menu"></ion-icon>
+                  </ion-button>
+                  <ion-title>Profile</ion-title>
+</ion-toolbar>
+              <ion-content>
+                <user-profile></user-profile>
+              </ion-content>
+              \`
+            })
+            class Bar {}
+          `);
+    });
   });
 });
